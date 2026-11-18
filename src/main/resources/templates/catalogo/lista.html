@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Catálogo - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container wide">
+    <div th:if="${param.acessoNegado}" class="alert alert-error">
+        Você não tem permissão para acessar essa área.
+    </div>
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}">Erro</div>
+
+    <div class="topbar-title">
+        <h1>Filmes em cartaz</h1>
+        <form th:action="@{/catalogo}" method="get" class="search">
+            <input type="text" name="q" th:value="${q}" placeholder="Buscar por título ou gênero"/>
+            <button type="submit" class="btn btn-primary">Buscar</button>
+        </form>
+    </div>
+
+    <div class="cards">
+        <div class="movie-card" th:each="item : ${catalogo}">
+            <div class="movie-head">
+                <h2 th:text="${item.filme.titulo}">Título</h2>
+                <span class="badge"
+                      th:text="${item.filme.classificacaoIndicativa == 'L'} ? 'Livre' : ${item.filme.classificacaoIndicativa} + ' anos'">14 anos</span>
+            </div>
+            <p class="meta"
+               th:text="${item.filme.genero} + ' • ' + ${item.filme.duracaoMinutos} + ' min • Estreia: ' + ${#temporals.format(item.filme.dataEstreia, 'dd/MM/yyyy')}">
+                Gênero</p>
+
+            <div class="sessions">
+                <div class="session" th:each="s : ${item.sessoes}">
+                    <div>
+                        <strong th:text="${#temporals.format(s.dataHora, 'dd/MM HH:mm')}">01/01 19:00</strong>
+                        <span class="muted" th:text="${s.sala.nome} + ' (' + ${s.sala.tipo} + ')'">Sala 1</span>
+                    </div>
+                    <div>
+                        <span th:text="'R$ ' + ${#numbers.formatDecimal(s.preco, 1, 'POINT', 2, 'COMMA')}">R$ 30,00</span>
+                        <span class="muted" th:text="${s.assentosDisponiveis} + ' lugares'">80 lugares</span>
+                    </div>
+                    <a th:if="${s.assentosDisponiveis > 0}" th:href="@{'/compra/sessao/' + ${s.id}}"
+                       class="btn btn-primary btn-comprar">Comprar</a>
+                    <span th:unless="${s.assentosDisponiveis > 0}" class="badge badge-off">Esgotado</span>
+                </div>
+                <p th:if="${item.sessoes.isEmpty()}" class="muted">Sem sessões programadas.</p>
+            </div>
+        </div>
+    </div>
+    <p th:if="${catalogo.isEmpty()}" class="muted">Nenhum filme encontrado.</p>
+</div>
+</body>
+</html>

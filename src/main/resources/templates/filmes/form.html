@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Filme - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container">
+    <h1 th:text="${filme.id == null} ? 'Novo Filme' : 'Editar Filme'">Filme</h1>
+    <form class="card" th:action="@{/filmes/salvar}" th:object="${filme}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group">
+            <label>Titulo</label>
+            <input type="text" th:field="*{titulo}"/>
+            <div class="error" th:if="${#fields.hasErrors('titulo')}" th:errors="*{titulo}"></div>
+        </div>
+        <div class="form-group">
+            <label>Genero</label>
+            <input type="text" th:field="*{genero}"/>
+            <div class="error" th:if="${#fields.hasErrors('genero')}" th:errors="*{genero}"></div>
+        </div>
+        <div class="form-group">
+            <label>Duracao (minutos)</label>
+            <input type="number" th:field="*{duracaoMinutos}"/>
+            <div class="error" th:if="${#fields.hasErrors('duracaoMinutos')}" th:errors="*{duracaoMinutos}"></div>
+        </div>
+        <div class="form-group">
+            <label>Classificacao Indicativa</label>
+            <input type="text" th:field="*{classificacaoIndicativa}" placeholder="L, 10, 12, 14, 16, 18"/>
+            <div class="error" th:if="${#fields.hasErrors('classificacaoIndicativa')}" th:errors="*{classificacaoIndicativa}"></div>
+        </div>
+        <div class="form-group">
+            <label>Data de Estreia</label>
+            <input type="date" th:field="*{dataEstreia}"/>
+            <div class="error" th:if="${#fields.hasErrors('dataEstreia')}" th:errors="*{dataEstreia}"></div>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/filmes}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Meus ingressos - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container wide">
+    <h1>Meus ingressos</h1>
+    <table>
+        <thead>
+        <tr>
+            <th>Pedido</th>
+            <th>Filme</th>
+            <th>Sessão</th>
+            <th>Sala</th>
+            <th>Assento</th>
+            <th>Valor</th>
+            <th>Pagamento</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="i : ${ingressos}">
+            <td th:text="${i.codigoPedido}">ABC12345</td>
+            <td th:text="${i.sessao.filme.titulo}">Filme</td>
+            <td th:text="${#temporals.format(i.sessao.dataHora, 'dd/MM/yyyy HH:mm')}">01/01/2026 19:00</td>
+            <td th:text="${i.sessao.sala.nome}">Sala 1</td>
+            <td th:text="${i.assento}">A1</td>
+            <td th:text="'R$ ' + ${#numbers.formatDecimal(i.valor, 1, 'POINT', 2, 'COMMA')}">R$ 30,00</td>
+            <td th:text="${i.formaPagamento.rotulo}">Pix</td>
+        </tr>
+        <tr th:if="${ingressos.isEmpty()}">
+            <td colspan="7" style="text-align:center;color:#6b7280">
+                Você ainda não comprou ingressos. <a th:href="@{/catalogo}">Ver catálogo</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

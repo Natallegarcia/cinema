@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sessoes - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container">
+    <div class="topbar-title">
+        <h1>Sessoes</h1>
+        <a th:href="@{/sessoes/nova}" class="btn btn-primary">+ Nova Sessao</a>
+    </div>
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}">Erro</div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Filme</th>
+            <th>Sala</th>
+            <th>Data/Hora</th>
+            <th>Preco</th>
+            <th>Assentos</th>
+            <th>Acoes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${sessoes}">
+            <td th:text="${s.id}">1</td>
+            <td th:text="${s.filme != null} ? ${s.filme.titulo} : '-'">Filme</td>
+            <td th:text="${s.sala != null} ? ${s.sala.nome} : '-'">Sala 1</td>
+            <td th:text="${#temporals.format(s.dataHora, 'dd/MM/yyyy HH:mm')}">01/01/2020 19:00</td>
+            <td th:text="'R$ ' + ${#numbers.formatDecimal(s.preco, 1, 2)}">R$ 30,00</td>
+            <td th:text="${s.assentosDisponiveis}">80</td>
+            <td class="actions">
+                <a th:href="@{'/sessoes/' + ${s.id} + '/editar'}" class="btn btn-edit">Editar</a>
+                <a th:href="@{'/sessoes/' + ${s.id} + '/excluir'}" class="btn btn-danger"
+                   onclick="return confirm('Excluir esta sessao?')">Excluir</a>
+            </td>
+        </tr>
+        <tr th:if="${sessoes.isEmpty()}">
+            <td colspan="7" style="text-align:center;color:#6b7280">Nenhuma sessao cadastrada.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

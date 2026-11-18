@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Salas - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container">
+    <div class="topbar-title">
+        <h1>Salas</h1>
+        <a th:href="@{/salas/nova}" class="btn btn-primary">+ Nova Sala</a>
+    </div>
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}">Erro</div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Capacidade</th>
+            <th>Tipo</th>
+            <th>Situacao</th>
+            <th>Acoes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="s : ${salas}">
+            <td th:text="${s.id}">1</td>
+            <td th:text="${s.nome}">Sala 1</td>
+            <td th:text="${s.capacidade}">100</td>
+            <td th:text="${s.tipo}">2D</td>
+            <td th:text="${s.ativa} ? 'Ativa' : 'Inativa'">Ativa</td>
+            <td class="actions">
+                <a th:href="@{'/salas/' + ${s.id} + '/editar'}" class="btn btn-edit">Editar</a>
+                <a th:href="@{'/salas/' + ${s.id} + '/excluir'}" class="btn btn-danger"
+                   onclick="return confirm('Excluir esta sala?')">Excluir</a>
+            </td>
+        </tr>
+        <tr th:if="${salas.isEmpty()}">
+            <td colspan="6" style="text-align:center;color:#6b7280">Nenhuma sala cadastrada.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

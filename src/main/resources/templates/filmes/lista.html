@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Filmes - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container">
+    <div class="topbar-title">
+        <h1>Filmes</h1>
+        <a th:href="@{/filmes/novo}" class="btn btn-primary">+ Novo Filme</a>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Titulo</th>
+            <th>Genero</th>
+            <th>Duracao (min)</th>
+            <th>Classificacao</th>
+            <th>Estreia</th>
+            <th>Acoes</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="f : ${filmes}">
+            <td th:text="${f.id}">1</td>
+            <td th:text="${f.titulo}">Titulo</td>
+            <td th:text="${f.genero}">Genero</td>
+            <td th:text="${f.duracaoMinutos}">120</td>
+            <td th:text="${f.classificacaoIndicativa}">12</td>
+            <td th:text="${#temporals.format(f.dataEstreia, 'dd/MM/yyyy')}">01/01/2020</td>
+            <td class="actions">
+                <a th:href="@{'/filmes/' + ${f.id} + '/editar'}" class="btn btn-edit">Editar</a>
+                <a th:href="@{'/filmes/' + ${f.id} + '/excluir'}" class="btn btn-danger"
+                   onclick="return confirm('Excluir este filme?')">Excluir</a>
+            </td>
+        </tr>
+        <tr th:if="${filmes.isEmpty()}">
+            <td colspan="7" style="text-align:center;color:#6b7280">Nenhum filme cadastrado.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

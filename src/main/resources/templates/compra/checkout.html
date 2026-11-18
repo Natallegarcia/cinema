@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Pagamento - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container wide">
+    <h1>Pagamento</h1>
+    <p class="muted">Ambiente de demonstração: nenhuma cobrança real é feita.</p>
+
+    <div class="checkout-grid">
+        <div class="panel">
+            <h2>Resumo do pedido</h2>
+            <p><strong th:text="${sessao.filme.titulo}">Filme</strong></p>
+            <p class="meta"
+               th:text="${#temporals.format(sessao.dataHora, 'dd/MM/yyyy HH:mm')} + ' • ' + ${sessao.sala.nome} + ' (' + ${sessao.sala.tipo} + ')'">
+                Sessão</p>
+            <p>Assentos: <strong id="checkout-assentos" th:text="${#strings.listJoin(assentos, ', ')}">A1</strong></p>
+            <p th:text="${assentos.size()} + ' × R$ ' + ${#numbers.formatDecimal(sessao.preco, 1, 'POINT', 2, 'COMMA')}">2 × R$ 30,00</p>
+            <p class="total">Total:
+                <strong id="checkout-total" th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">R$ 60,00</strong></p>
+            <a th:href="@{'/compra/sessao/' + ${sessao.id}}" class="btn btn-secondary">Alterar assentos</a>
+        </div>
+
+        <form class="panel" id="form-pagamento" th:action="@{/compra/pagar}" method="post">
+            <h2>Forma de pagamento</h2>
+            <div th:if="${erro}" class="alert alert-error" id="erro-pagamento" th:text="${erro}">Erro</div>
+
+            <input type="hidden" name="sessaoId" th:value="${sessao.id}"/>
+            <input type="hidden" name="assentos" th:each="a : ${assentos}" th:value="${a}"/>
+
+            <div class="pay-options">
+                <label class="pay-option" th:each="f : ${formas}">
+                    <input type="radio" name="forma" th:id="'forma-' + ${f.name()}"
+                           th:value="${f.name()}" th:checked="${f.name() == forma}"/>
+                    <span th:text="${f.rotulo}">Cartão</span>
+                </label>
+            </div>
+
+            <div id="bloco-cartao">
+                <div class="form-group">
+                    <label for="numeroCartao">Número do cartão</label>
+                    <input type="text" id="numeroCartao" name="numeroCartao" inputmode="numeric"
+                           maxlength="23" placeholder="0000 0000 0000 0000" autocomplete="off"/>
+                </div>
+                <div class="form-group">
+                    <label for="nomeTitular">Nome do titular</label>
+                    <input type="text" id="nomeTitular" name="nomeTitular" autocomplete="off"/>
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label for="validade">Validade (MM/AA)</label>
+                        <input type="text" id="validade" name="validade" placeholder="12/30" maxlength="5" autocomplete="off"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="cvv">CVV</label>
+                        <input type="password" id="cvv" name="cvv" maxlength="4" autocomplete="off"/>
+                    </div>
+                </div>
+                <p class="muted small">Teste: cartões terminados em 0000 são recusados.</p>
+            </div>
+
+            <div id="bloco-pix" class="pix-box" style="display:none">
+                <div class="qr" aria-hidden="true"></div>
+                <p>Pix copia e cola (simulado):</p>
+                <code>00020126580014BR.GOV.BCB.PIX0136cinema-fatesg-demo5204000053039865802BR</code>
+                <p class="muted small">Clique em "Confirmar pagamento" para simular o pagamento do Pix.</p>
+            </div>
+
+            <button type="submit" id="btn-pagar" class="btn btn-primary btn-block">Confirmar pagamento</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    (function () {
+        var radios = document.querySelectorAll('input[name="forma"]');
+        function alternar() {
+            var sel = document.querySelector('input[name="forma"]:checked');
+            var pix = sel && sel.value === 'PIX';
+            document.getElementById('bloco-cartao').style.display = pix ? 'none' : 'block';
+            document.getElementById('bloco-pix').style.display = pix ? 'block' : 'none';
+        }
+        Array.prototype.forEach.call(radios, function (r) { r.addEventListener('change', alternar); });
+        alternar();
+    })();
+</script>
+</body>
+</html>

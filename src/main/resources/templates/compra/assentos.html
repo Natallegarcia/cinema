@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Escolha de assentos - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container wide">
+    <div th:if="${erro}" class="alert alert-error" th:text="${erro}">Erro</div>
+
+    <h1 th:text="${sessao.filme.titulo}">Filme</h1>
+    <p class="meta"
+       th:text="${#temporals.format(sessao.dataHora, 'dd/MM/yyyy HH:mm')} + ' • ' + ${sessao.sala.nome} + ' (' + ${sessao.sala.tipo} + ') • R$ ' + ${#numbers.formatDecimal(sessao.preco, 1, 'POINT', 2, 'COMMA')} + ' por ingresso'">
+        Sessão</p>
+
+    <form id="form-assentos" th:action="@{/compra/checkout}" method="post"
+          th:attr="data-preco=${sessao.preco},data-max=${maxIngressos}">
+        <input type="hidden" name="sessaoId" th:value="${sessao.id}"/>
+
+        <div class="screen">TELA</div>
+        <div class="seat-map">
+            <div class="seat-row" th:each="fila : ${mapa}">
+                <span class="row-label" th:text="${fila.key}">A</span>
+                <label class="seat" th:each="a : ${fila.value}"
+                       th:classappend="${a.ocupado} ? 'seat-taken'">
+                    <input type="checkbox" name="assentos" th:value="${a.codigo}" th:disabled="${a.ocupado}"/>
+                    <span th:text="${a.codigo}" th:title="${a.ocupado} ? 'Ocupado' : 'Disponível'">A1</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="legend">
+            <span><i class="seat-sample"></i> Disponível</span>
+            <span><i class="seat-sample selected"></i> Selecionado</span>
+            <span><i class="seat-sample taken"></i> Ocupado</span>
+        </div>
+
+        <div class="summary-bar">
+            <div>
+                <div>Assentos: <strong id="resumo-assentos">nenhum</strong></div>
+                <div>Total: <strong id="resumo-total">R$ 0,00</strong>
+                    <span class="muted" th:text="'(máx. ' + ${maxIngressos} + ' por compra)'"></span></div>
+            </div>
+            <div class="actions">
+                <a th:href="@{/catalogo}" class="btn btn-secondary">Voltar</a>
+                <button type="submit" id="btn-continuar" class="btn btn-primary" disabled>
+                    Continuar para pagamento</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    (function () {
+        var form = document.getElementById('form-assentos');
+        var preco = parseFloat(form.dataset.preco);
+        var max = parseInt(form.dataset.max, 10);
+        var botao = document.getElementById('btn-continuar');
+
+        function atualizar(evento) {
+            var marcados = form.querySelectorAll('input[name="assentos"]:checked');
+            if (marcados.length > max && evento && evento.target) {
+                evento.target.checked = false;
+                marcados = form.querySelectorAll('input[name="assentos"]:checked');
+                alert('Máximo de ' + max + ' ingressos por compra.');
+            }
+            var codigos = Array.prototype.map.call(marcados, function (c) { return c.value; });
+            document.getElementById('resumo-assentos').textContent = codigos.length ? codigos.join(', ') : 'nenhum';
+            document.getElementById('resumo-total').textContent =
+                (codigos.length * preco).toLocaleString('pt-BR', {style: 'currency', currency: 'BRL'});
+            botao.disabled = codigos.length === 0;
+        }
+        form.addEventListener('change', atualizar);
+        atualizar();
+    })();
+</script>
+</body>
+</html>

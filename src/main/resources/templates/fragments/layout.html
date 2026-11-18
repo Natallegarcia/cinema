@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:fragment="head(titulo)">
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${titulo}">Cinema</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+<nav class="navbar" th:fragment="navbar">
+    <span class="brand">CINEMA FATESG</span>
+    <a th:href="@{/catalogo}">Catálogo</a>
+    <a th:href="@{/meus-ingressos}">Meus ingressos</a>
+    <th:block sec:authorize="hasRole('ADMIN')">
+        <span class="nav-sep">|</span>
+        <a th:href="@{/filmes}">Filmes</a>
+        <a th:href="@{/sessoes}">Sessoes</a>
+        <a th:href="@{/salas}">Salas</a>
+        <a th:href="@{/usuarios}">Usuarios</a>
+    </th:block>
+    <span class="spacer"></span>
+    <span sec:authorize="isAuthenticated()"
+          th:text="'Olá, ' + ${#authentication.name}">usuario</span>
+    <form th:action="@{/logout}" method="post" style="display:inline">
+        <button type="submit" class="btn btn-secondary">Sair</button>
+    </form>
+</nav>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Sala - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container">
+    <h1 th:text="${sala.id == null} ? 'Nova Sala' : 'Editar Sala'">Sala</h1>
+    <form class="card" th:action="@{/salas/salvar}" th:object="${sala}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="form-group">
+            <label>Nome</label>
+            <input type="text" th:field="*{nome}"/>
+            <div class="error" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></div>
+        </div>
+        <div class="form-group">
+            <label>Capacidade (assentos)</label>
+            <input type="number" th:field="*{capacidade}"/>
+            <div class="error" th:if="${#fields.hasErrors('capacidade')}" th:errors="*{capacidade}"></div>
+        </div>
+        <div class="form-group">
+            <label>Tipo</label>
+            <select th:field="*{tipo}">
+                <option value="2D">2D</option>
+                <option value="3D">3D</option>
+                <option value="IMAX">IMAX</option>
+                <option value="VIP">VIP</option>
+            </select>
+            <div class="error" th:if="${#fields.hasErrors('tipo')}" th:errors="*{tipo}"></div>
+        </div>
+        <div class="form-group">
+            <label><input type="checkbox" th:field="*{ativa}" style="width:auto"/> Sala ativa</label>
+        </div>
+
+        <div class="actions">
+            <button type="submit" class="btn btn-primary">Salvar</button>
+            <a th:href="@{/salas}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

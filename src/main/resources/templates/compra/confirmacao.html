@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head('Compra confirmada - Cinema FATESG')}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: navbar}"></nav>
+<div class="container wide">
+    <div class="alert alert-ok" id="msg-sucesso">
+        <strong>Compra confirmada!</strong> Pagamento aprovado via <span th:text="${forma.rotulo}">Pix</span>.
+    </div>
+
+    <h1>Seus ingressos</h1>
+    <p>Código do pedido: <strong id="codigo-pedido" th:text="${codigo}">ABC12345</strong></p>
+    <p><strong th:text="${sessao.filme.titulo}">Filme</strong> •
+        <span th:text="${#temporals.format(sessao.dataHora, 'dd/MM/yyyy HH:mm')} + ' • ' + ${sessao.sala.nome} + ' (' + ${sessao.sala.tipo} + ')'">Sessão</span></p>
+
+    <div class="tickets">
+        <div class="ticket" th:each="i : ${ingressos}">
+            <div class="ticket-seat" th:text="${i.assento}">A1</div>
+            <div>
+                <div th:text="${i.sessao.filme.titulo}">Filme</div>
+                <div class="muted" th:text="'R$ ' + ${#numbers.formatDecimal(i.valor, 1, 'POINT', 2, 'COMMA')}">R$ 30,00</div>
+            </div>
+        </div>
+    </div>
+
+    <p class="total">Total pago:
+        <strong th:text="'R$ ' + ${#numbers.formatDecimal(total, 1, 'POINT', 2, 'COMMA')}">R$ 60,00</strong></p>
+
+    <div class="actions">
+        <a th:href="@{/meus-ingressos}" class="btn btn-primary">Meus ingressos</a>
+        <a th:href="@{/catalogo}" class="btn btn-secondary">Voltar ao catálogo</a>
+    </div>
+</div>
+</body>
+</html>
